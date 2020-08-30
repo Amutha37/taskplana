@@ -35,12 +35,17 @@ addToHTML()
                         </div>
                         <button class="edit btn btn-primary btn-sm float-right ml-2 "  
                         value="${this.taskId}" 
-                        style = " color: white";">           
-                        E</button>
-                        <button  class="delete btn btn-danger btn-sm float-right" 
+                        style = " color: white";"> 
+                        <i class='fa fa-edit'></i>      
+                        </button>
+                        <button type="button" class="delete btn btn-danger btn-sm float-right" 
                         value="${this.taskId}" 
                         style = "color: white;">
-                        X
+                        <i class="fa fa-trash yellow-color " ></i>
+                     
+                     
+                      
+                                          
                         </button>
                     </div>
                 </div>

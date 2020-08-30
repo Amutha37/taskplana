@@ -27,7 +27,9 @@
     margin-bottom: 20px;
   }
   
-   
+    .yellow-color {
+      color:yellow;
+      }
 .fram {
     background-color: #bf8040;
     justify-content:  center;

@@ -112,6 +112,8 @@ function displayTask(){
 
     const addHtml=task.addToHTML();
     const element = document.createRange().createContextualFragment(addHtml);
+
+    // DELETE BUTTON 
     const btnDelete=element.querySelector("button.delete");
     const btnEdit=element.querySelector("button.edit");
             
@@ -140,6 +142,8 @@ function displayFilter(taski){
 
     const addHtml=task.addToHTML();
     const element = document.createRange().createContextualFragment(addHtml);
+
+    //  DELETE BUTTON
     const btnDelete=element.querySelector("button.delete");
     const btnEdit=element.querySelector("button.edit");
             
