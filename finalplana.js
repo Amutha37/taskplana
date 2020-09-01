@@ -24,10 +24,6 @@ const asn=document.querySelector("#asn");
 const due=document.querySelector("#due");
 const st=document.querySelector("#st");
 
-// const itemBox = document.querySelector(".itemBox");
-// itemBox.addEventListener("onmouseover", cardDisplay);
-
-
 //Modal and Form Buttons 
 
 const btnSave=document.querySelector("#btnSave");
@@ -42,58 +38,65 @@ btnDisplay.addEventListener("click",displayTask);
 const btnFilter =document.querySelector("#btnFilter");
 btnFilter.addEventListener("click",filterSelection);
 
+const btnToday =document.querySelector("#btnToday");
+btnToday.addEventListener("click",todaySelection);
+
+const btnAModalReset = document.querySelector("#btnAModalReset");
+btnAModalReset.addEventListener("click", clearAll);
+
+const btnEModalReset = document.querySelector("#btnEModalReset");
+btnEModalReset.addEventListener("click", clearEdit);
 
 const toDo =document.querySelector("#toDo");
 const inProgress =document.querySelector("#inProgress");
 const review =document.querySelector("#review");
 const done =document.querySelector("#done");
 
-
-
 const listGroupContainer=document.querySelector("#listGroupContainer");
 
+var taskNameEvent = new Boolean();
+var assigneeEvent = new Boolean();
+var descriptionEvent = new Boolean();
+var statusEvent = new Boolean();
+var dateEvent = new Boolean();
 
-var taskNameEvent = new Boolean(true);
-var assigneeEvent = new Boolean(true);
-var descriptionEvent = new Boolean(true);
-var statusEvent = new Boolean(true);
-var dateEvent = new Boolean(true);
+taskNameEvent = false;
+assigneeEvent = false;
+
+var taskNameEditEvent = new Boolean(false);
+var assigneeEditEvent = new Boolean(false);
+var descriptionEditEvent = new Boolean(false);
 
 // Initialising(creating instances) classes
 const task = new Task();
 const taskManager = new TaskManager();
-// displayTask();
+
 
 function saveButtonClicked(event){
     if(taskNameEvent && assigneeEvent && descriptionEvent && statusEvent){
         taskManager.addTask(taskName.value, description.value, assignee.value, statusSelect.value, taskDate.value);
         displayTask();    
         clearAll();
-        $('#staticBackdrop').modal("hide");   
-        return true;        
-    }
-    else{
-        return false;
+        $('#staticBackdrop').modal("hide");
+        taskNameEvent = false;
+        assigneeEvent = false;   
+    }       
+    else 
+    {
+        $('#staticBackdrop').modal("show"); 
     }
 }
 
 function editSaveButtonClicked(event){
-    alert("I am Mr. Edit, I am clicked");
-    // if(taskName.value && assignee.value && description.value !== ""){
-    //     alert("I am checking values");
-    //     if(taskNameEvent || assigneeEvent || descriptionEvent){
-    alert("I am calling Update");
-    alert()
-    taskManager.updateTask(hiddenTaskId.value, taskNameEdit.value, descriptionEdit.value, assigneeEdit.value, statusSelectEdit.value, taskDateEdit.value);
-    displayTask();    
-    // clearEdit();
-    $('#staticBackdropEdit').modal("hide");   
-//         return true;        
-//         }
-//     }
-//     else{
-//         return false;
-//     }
+    if(taskNameEditEvent && assigneeEditEvent && descriptionEditEvent){
+            taskManager.updateTask(hiddenTaskId.value, taskNameEdit.value, descriptionEdit.value, assigneeEdit.value, statusSelectEdit.value, taskDateEdit.value);
+            displayTask();    
+            $('#staticBackdropEdit').modal("hide");
+            return true;
+    }
+    else{
+        $('#staticBackdropEdit').modal("show");
+    }
 }
 
 function displayTask(){ 
@@ -112,8 +115,6 @@ function displayTask(){
 
     const addHtml=task.addToHTML();
     const element = document.createRange().createContextualFragment(addHtml);
-
-    // DELETE BUTTON 
     const btnDelete=element.querySelector("button.delete");
     const btnEdit=element.querySelector("button.edit");
             
@@ -122,10 +123,11 @@ function displayTask(){
 
     const itemBox = element.querySelector("a.list-group-item");
     itemBox.addEventListener("mouseover", cardDisplay);
-
+    
     listGroupContainer.append(element);
    }
 }
+
 function displayFilter(taski){
 
     listGroupContainer.innerHTML="";
@@ -142,8 +144,6 @@ function displayFilter(taski){
 
     const addHtml=task.addToHTML();
     const element = document.createRange().createContextualFragment(addHtml);
-
-    //  DELETE BUTTON
     const btnDelete=element.querySelector("button.delete");
     const btnEdit=element.querySelector("button.edit");
             
@@ -152,6 +152,7 @@ function displayFilter(taski){
 
     const itemBox = element.querySelector("a.list-group-item");
     itemBox.addEventListener("mouseover", cardDisplay);
+
     listGroupContainer.append(element);
     }
 }
@@ -160,12 +161,27 @@ function cardDisplay(event){
   
   const myTask = JSON.parse(localStorage.getItem ('Banana'));
   let task = myTask.find(m => m.taskId === id);
-//   console.log(task);
+
   tsk.textContent = task.name;
   asn.textContent = task.assign;
   due.textContent = task.date;
   st.textContent = task.stat;
-//   console.log(tsk.value);
+
+}
+
+function todaySelection(event){
+    let today = new Date();
+    let todayTskList = [];
+    const myTask = JSON.parse(localStorage.getItem ('Banana'));
+    if(myTask != []){
+        for(let i=0; i< myTask.length;i++){
+            let tskDate = new Date(myTask[i].date);  
+            if(tskDate.getDate() === today.getDate() && tskDate.getMonth() ===today.getMonth() && tskDate.getFullYear() === today.getFullYear()){
+                todayTskList.push(myTask[i]);
+            } 
+        }
+        displayFilter(todayTskList);
+    }
 }
 
 function filterSelection(event){
@@ -201,8 +217,7 @@ function editButtonClicked(event)
 {
     $('#staticBackdropEdit').modal("show");
     const id= event.target.value;
-    // console.log(event.target);
-   
+    
     let myTaskList = JSON.parse(localStorage.getItem("Banana"));
     let task=myTaskList.find(m => m.taskId === id);
     
@@ -230,18 +245,46 @@ function clearAll(){
     taskDate.classList.remove("is-valid", "is-valid");
 }
 
+function clearEdit(){
+    taskNameEdit.value = null;
+	descriptionEdit.value = null;
+	assigneeEdit.value = null;
+	taskDateEdit.value = null;
+    statusSelectEdit.value = null;
+    
+    taskNameEdit.classList.remove("is-valid", "is-invalid");
+    descriptionEdit.classList.remove("is-valid", "is-invalid");
+    assigneeEdit.classList.remove("is-valid", "is-invalid");
+    statusSelectEdit.classList.remove("is-valid", "is-invalid");
+    taskDateEdit.classList.remove("is-valid", "is-invalid");
+}
+
 //Task form validation  Begins here
 taskName.addEventListener("input",function(event){
-        if (event.target.value && event.target.value.length >= 3) {
+    if (event.target.value && event.target.value.length >= 3) {
             event.target.classList.remove("is-invalid");
             event.target.classList.add("is-valid");
-            
             taskNameEvent= true;         
-        } else {
+    } 
+       
+    else {
         event.target.classList.remove("is-valid");
         event.target.classList.add("is-invalid");
         taskNameEvent= false;
-        }
+    }
+});
+
+taskNameEdit.addEventListener("input",function(event){
+    if (event.target.value && event.target.value.length >= 3) {
+        event.target.classList.remove("is-invalid");
+        event.target.classList.add("is-valid");
+        
+        taskNameEditEvent= true;         
+    } else {
+    event.target.classList.remove("is-valid");
+    event.target.classList.add("is-invalid");
+    taskNameEditEvent= false;
+    }
 });
    
 assignee.addEventListener("input",function(event){
@@ -255,6 +298,18 @@ assignee.addEventListener("input",function(event){
         assigneeEvent = false;
         }
 });
+
+assigneeEdit.addEventListener("input",function(event){
+    if (event.target.value && event.target.value.length >= 3) {
+        event.target.classList.remove("is-invalid");
+        event.target.classList.add("is-valid");
+        assigneeEditEvent= true;
+    } else {
+    event.target.classList.remove("is-valid");
+    event.target.classList.add("is-invalid");
+    assigneeEditEvent = false;
+    }
+});
 description.addEventListener("input",function(event){
         if (event.target.value && event.target.value.length >= 3) {
             event.target.classList.remove("is-invalid");
@@ -265,6 +320,17 @@ description.addEventListener("input",function(event){
             event.target.classList.add("is-invalid");
             descriptionEvent=false;
         }
+});
+descriptionEdit.addEventListener("input",function(event){
+    if (event.target.value && event.target.value.length >= 3) {
+        event.target.classList.remove("is-invalid");
+        event.target.classList.add("is-valid");
+        descriptionEditEvent=true;
+    } else {
+        event.target.classList.remove("is-valid");
+        event.target.classList.add("is-invalid");
+        descriptionEditEvent=false;
+    }
 });
 
 statusSelect.addEventListener("input",function(event){
@@ -278,16 +344,16 @@ statusSelect.addEventListener("input",function(event){
             statusEvent=false;
         }
 });
-taskDate.addEventListener("input",function(event){
-        if (event.target.value ) {
-            event.target.classList.remove("is-invalid");
-            event.target.classList.add("is-valid");
-            statusEvent=true;
-        } else {
-            event.target.classList.remove("is-valid");
-            event.target.classList.add("is-invalid");
-            statusEvent=false;
-        }
-});
+// taskDate.addEventListener("input",function(event){
+//         if (event.target.value ) {
+//             event.target.classList.remove("is-invalid");
+//             event.target.classList.add("is-valid");
+//             statusEvent=true;
+//         } else {
+//             event.target.classList.remove("is-valid");
+//             event.target.classList.add("is-invalid");
+//             statusEvent=false;
+//         }
+// });
 
- // Task Form Validation Ends here
+ 
