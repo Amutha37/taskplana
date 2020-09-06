@@ -37,15 +37,17 @@ addToHTML()
                         <div class="p-2 bd-highlight ">
                             <span style="${this.stat === "Done" ? "color: green": "color:black"}"> ${this.stat} </span>   
                         </div>
-                        <button type="button" class="delete btn btn-danger btn-sm float-right" 
-                value="${this.taskId}" 
-                style = "color: white;">
-            
-                </button>
+                        
                 <button class="edit btn btn-primary btn-sm float-left ml-2 "  
                 value="${this.taskId}" 
-                style = " color: white";"> 
+                style = " color: white";"> E
            
+                </button>
+
+               <button type="button" class="delete btn btn-danger btn-sm float-right" 
+                value="${this.taskId}" 
+                style = "color: white;">D
+            
                 </button>
                         
                         
